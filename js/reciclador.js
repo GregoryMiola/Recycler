@@ -8,14 +8,14 @@ function Reciclador() {
     legenda = $('<div id="legenda"></div>')
     legenda.append(h1)
     $('#ambiente').append(legenda)
-    ambiente.criar()    
+    ambiente.criar()
   }
 }
 
 function Ambiente(tamanho) {  
   
+  this.agentes = []
   var objetos = []
-  var agentes = []
   var localizacoes = new Localizacoes(tamanho)
   
   this.criar = function() {
@@ -47,8 +47,8 @@ function Ambiente(tamanho) {
   
   var criarListaDeAgentes = function(total) {
     for(var indice = 0; indice < total; indice++)
-      adicionarObjeto(criarAgente(), agentes)      
-    $.each(agentes, function() { this.procura() })
+      adicionarObjeto(criarAgente(), this.agentes)      
+    //$.each(this.agentes, function() { this.procura() }) aqui era pra andar
   }
   
   function adicionarObjeto(objeto, colecao) {

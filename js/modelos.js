@@ -84,13 +84,7 @@ function Saco(params) {
  *
  * 12 - Ao chegar em uma lixeira cheia, não deverá mais ir até ela
  */
-function andar(agente) { 
-  $('#'+agente.coordenada()).empty()
-  agente.localizacao.x++
-  $('#'+agente.coordenada()).append(agente.show())
-}
-
-function intervalo(objeto, tempo) {    
+function intervalo(objeto, tempo) {
   andar(objeto)
   if(coordenadaValida(objeto.localizacao))
     setTimeout(function() { intervalo(tempo + tempo / 2) }, tempo)
@@ -109,9 +103,10 @@ function Agente(params) {
     intervalo(agente, 200)
   }
   
-  this.andar = function() { 
+  this.andar = function() {
     $('#'+this.coordenada()).empty()
     this.localizacao.x++
+    console.log(this.localizacao)
     $('#'+this.coordenada()).append(this.show())
   }
   
