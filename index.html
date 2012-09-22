@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.1.js"></script>
+    <script type="text/javascript" src="js/modelos.js"></script>    
+    <script type="text/javascript" src="js/reciclador.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css"></link>
+    <title>Reciclador de Lixo</title>
+  </head>  
+  <body>
+    <div id="ambiente"></div>
+    <div>
+      <input id="runButton" type="button" value="Rodar">
+      <input id="nextButton" type="button" value="Avançar">
+    </div>
+    <script type="text/javascript">
+      $(function() { 
+        reciclador = new Reciclador();
+        $("#runButton").click(function() { reciclador.run() })
+        $("#nextButton").click(function() { reciclador.next() })
+      })      
+    </script>
+  </body>  
+</html>

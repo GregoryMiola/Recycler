@@ -1,0 +1,7 @@
+body { background-color: #333; color: #fff; padding-bottom: 50px; }
+table { border: 2px solid #000; background-color: #eee; 
+  margin-left: auto; margin-right: auto; }
+td { width: 50px; height: 50px; border: 2px solid #000; }
+
+.procurando { background-color: #F63; }
+.encontrado { background-color: #F30; }
