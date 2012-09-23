@@ -61,15 +61,19 @@ function Agente(params) {
   var maximo = tamanho - 1
   
   var alteraLocalizacao = function() {
-    switch(direcao[random(3)]) {
+    switch(direcao[random(4)]) {
       case "cima":
         if(localizacao.x > 0) localizacao.dec_x()
+		break;
       case "baixo":
         if(localizacao.x < maximo) localizacao.x = localizacao.x + 1
+		break;
       case "esquerda":
         if(localizacao.y > 0) localizacao.y = localizacao.y - 1
+		break;
       case "direita":
         if(localizacao.y < maximo) localizacao.y = localizacao.y + 1
+		break;
     }
   }
   
