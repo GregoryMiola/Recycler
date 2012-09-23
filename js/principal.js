@@ -14,7 +14,7 @@ function Aplicacao() {
   var count = 0
   var repeat = function() { 
     ambiente.mover()
-    if(count++ < 10)
+    if(count++ <= 10)
       setTimeout(repeat, 300)
   }
   

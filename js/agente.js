@@ -11,16 +11,20 @@ function Agente(params) {
   var andar = function() {
     switch (direcao[random(4)]) {
       case "cima":
-        if(localizacao.x > 0) localizacao.x -= 1
+        if(localizacao.x > 0 && localizacao.x != 0) localizacao.x -= 1
+		else andar()
         break
       case "baixo":
-        if(localizacao.x < maximo) localizacao.x += 1
+        if(localizacao.x < maximo && localizacao.x != maximo) localizacao.x += 1
+		else andar()
         break
       case "esquerda":
-        if(localizacao.y > 0) localizacao.y -= 1
+        if(localizacao.y > 0 && localizacao.y != 0) localizacao.y -= 1
+		else andar()
         break;
       case "direita":
-        if(localizacao.y < maximo) localizacao.y += 1
+        if(localizacao.y < maximo && localizacao.y != maximo) localizacao.y += 1
+		else andar()
         break;
     }
     return localizacao.coordenada()
