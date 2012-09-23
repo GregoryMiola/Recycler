@@ -14,8 +14,9 @@ function Aplicacao() {
   var count = 0
   var repeat = function() { 
     ambiente.mover()
-    if(count++ < 3)
-      setTimeout(repeat, 0.500)
+    console.log(count)
+    if(count++ < 10)
+      setTimeout(repeat, 1000)
   }
   
   this.run = function() {
@@ -40,7 +41,8 @@ function Ambiente(tamanho) {
   }
   
   this.mover = function() {
-    $.each(agentes, function() { 
+    $.each(agentes, function() {
+      console.log(this)
       this.anda() 
     })
   }

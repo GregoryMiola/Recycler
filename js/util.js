@@ -16,6 +16,5 @@ function novaImagem(src) {
 }
 
 function setColor(element, color) {
-  console.log(element)
   $('#' + element).css("background-color", color)
 }
