@@ -2,11 +2,13 @@
 <html>
   <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.1.js"></script>
-    <script type="text/javascript" src="js/modelos.js"></script>    
-    <script type="text/javascript" src="js/reciclador.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css"></link>
+    <script type="text/javascript" src="Recycler/js/util.js"></script>
+    <script type="text/javascript" src="Recycler/js/localizacao.js"></script>
+    <script type="text/javascript" src="Recycler/js/matriz.js"></script>
+    <script type="text/javascript" src="Recycler/js/principal.js"></script>
+    <link rel="stylesheet" type="text/css" href="Recycler/css/style.css"></link>
     <title>Reciclador de Lixo</title>
-  </head>  
+  </head>
   <body>
     <div>
       <input id="runButton" type="button" value="Rodar">
@@ -15,7 +17,7 @@
     <div id="ambiente"></div>    
     <script type="text/javascript">
       $(function() { 
-        reciclador = new Reciclador();
+        reciclador = new Aplicacao();
         $("#runButton").click(function() { reciclador.run() })
         $("#nextButton").click(function() { reciclador.next() })
       })      
