@@ -14,7 +14,3 @@ function novaImagem(src) {
   img.src = src
   return img
 }
-
-function setColor(element, color) {
-  $('#' + element).css("background-color", color)
-}

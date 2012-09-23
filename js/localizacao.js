@@ -5,9 +5,6 @@ function Localizacao(localizacao) {
   this.possuiMesmaCoordenadaQue = function(objeto) {
     return (objeto.x == this.x && objeto.y == this.y)
   }
-  this.dec_x = function() { 
-    this.x -= 1 
-  }
 }
 
 function Localizacoes(tamanho) {
