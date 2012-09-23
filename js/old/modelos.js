@@ -5,12 +5,6 @@ function Imagens(tipos) {
   this.imagem = function(tipo) { return novaImagem(tipos[tipo]) }  
 }
 
-function novaImagem(src) {
-  img = new Image()
-  img.src = src
-  return img
-}
-
 function Localizacao(localizacao) {
   this.x = localizacao['x']
   this.y = localizacao['y']

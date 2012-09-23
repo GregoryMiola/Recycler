@@ -6,8 +6,10 @@
     <script type="text/javascript" src="js/localizacao.js"></script>
     <script type="text/javascript" src="js/matriz.js"></script>
     <script type="text/javascript" src="js/saco.js"></script>
+    <script type="text/javascript" src="js/lixos.js"></script>
     <script type="text/javascript" src="js/agente.js"></script>
-    <script type="text/javascript" src="js/principal.js"></script>
+    <script type="text/javascript" src="js/ambiente.js"></script>
+    <script type="text/javascript" src="js/reciclador.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css"></link>
     <title>Reciclador de Lixo</title>
   </head>
@@ -19,7 +21,7 @@
     <div id="ambiente"></div>    
     <script type="text/javascript">
       $(function() { 
-        reciclador = new Aplicacao();
+        reciclador = new Reciclador();
         $("#runButton").click(function() { reciclador.run() })
         $("#nextButton").click(function() { reciclador.next() })
       })      
