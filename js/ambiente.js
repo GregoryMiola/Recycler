@@ -68,7 +68,10 @@ function Ambiente(tamanho) {
   }*/
   
   function criarAgente() {
-    return new Agente({localizacao: localizacoes.nova()})
+    return new Agente({
+	  localizacao: localizacoes.nova(),
+	  capacidade: random(10),
+    })
   }
   
   var valida = function(coordenada) {
