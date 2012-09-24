@@ -7,7 +7,6 @@ function Ambiente(tamanho) {
   var init = function() {
     new Matriz(tamanho)
     criarObjetos()
-    //agentes.push(new Agente({ localizacao: localizacoes.nova() }))
   }
   
   var criarObjetos = function() {    
@@ -21,10 +20,10 @@ function Ambiente(tamanho) {
     criarListaDeObjetos(totalDeLixeiras, criarLixeira)
     criarListaDeAgentes(totalDeAgentes)
     
-    $("#legenda").append("<h2>Total:" + totalDeObjetos + '</h2>')
-    $("#legenda").append("<h2>Total de lixos:" + totalDeLixos + '</h2>')
-    $("#legenda").append("<h2>Total de lixeiras:" + totalDeLixeiras + '</h2>')
-    $("#legenda").append("<h2>Total de agentes:" + totalDeAgentes + '</h2>')
+    //$("#legenda").append("<h2>Total:" + totalDeObjetos + '</h2>')
+    //$("#legenda").append("<h2>Total de lixos:" + totalDeLixos + '</h2>')
+    //$("#legenda").append("<h2>Total de lixeiras:" + totalDeLixeiras + '</h2>')
+    //$("#legenda").append("<h2>Total de agentes:" + totalDeAgentes + '</h2>')
   }
   
   var criarListaDeObjetos = function(total, metodo) {    
@@ -42,7 +41,7 @@ function Ambiente(tamanho) {
     colecao.push(objeto)
   }
   
-  function criarLixo() {     
+  function criarLixo() {
     return new Lixo({ 
       localizacao: localizacoes.nova(),
       tipo: (random(2)) ? 'seco' : 'organico'
@@ -57,26 +56,23 @@ function Ambiente(tamanho) {
     })
   }
   
-  /*function criarAgente() {
-    return new Agente({ 
-      localizacao: localizacoes.nova(),
-      capacidade: random(10),
-      limpar: removeLixo,
-      procurar: procurarLixo,
-      coordenadaValida: valida
-    })
-  }*/
-  
   function criarAgente() {
     return new Agente({
-	  localizacao: localizacoes.nova(),
-	  capacidade: random(10),
+      localizacao: localizacoes.nova(),
+      capacidade: random(10),
+      procurar: procuraObjeto
     })
   }
   
-  var valida = function(coordenada) {
-    return (coordenada.x >= 0 && coordenada.y >= 0) &&
-           (coordenada.x <= tamanho && coordenada.y <= tamanho)
+  var procuraObjeto = function(coordenada) {
+    objeto = null
+    $.each(objetos, function() {
+      if(coordenada.possuiMesmaCoordenadaQue(this.localizacao)) {
+        objeto = this
+        return
+      }
+    })
+    return objeto
   }
   
   this.mover = function() { $.each(agentes, function() { this.anda() }) }

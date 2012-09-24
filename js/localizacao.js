@@ -1,6 +1,6 @@
 function Localizacao(localizacao) {
   this.x = localizacao['x']
-  this.y = localizacao['y']  
+  this.y = localizacao['y']
   this.coordenada = function() { return this.x + '-' + this.y }
   this.possuiMesmaCoordenadaQue = function(objeto) {
     return (objeto.x == this.x && objeto.y == this.y)

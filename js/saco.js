@@ -1,7 +1,15 @@
-function Lixo(params) {  
-  this.localizacao = new Localizacao(params['localizacao'])
-  this.coordenada = fnCoordenada
-  this.tipo = function() { return params['tipo'] }
-  this.elemento = lixos.imagem(this.tipo())
-  this.show = function() { return this.elemento }
+function Saco(params) {
+  var tipo = params['tipo'];
+  var capacidade = params['capacidade'];
+  var quantidade_ocupada = 0;
+  this.estaCheio = function (){ return quantidade_ocupada == capacidade }
+  this.adicionar = function() {
+    if(!this.estaCheio()) {
+      quantidade_ocupada++
+      console.log(tipo + " coletado")
+      console.log(quantidade_ocupada)
+      return true
+    }
+    return false
+  }
 }
