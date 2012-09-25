@@ -1,13 +1,15 @@
 var direcao = [ "cima", "esquerda", "baixo", "direita" ]
 
 function Agente(params) {
-
+  
   var instancia = this
   var verificaObjeto = params["procurar"]
+  var recolherLixo = params["remover"]
   
   var init = function() { 
     instancia.localizacao = params['localizacao']
     instancia.maximo = tamanho - 1
+    instancia.lixeiras = params["lixeiras"]
     instancia.saco = []
     instancia.saco['seco'] = new Saco({ tipo: 'seco', capacidade: params['capacidade'] })
     instancia.saco['organico'] = new Saco({ tipo: 'organico', capacidade: params['capacidade'] })
@@ -33,40 +35,57 @@ function Agente(params) {
   }
   
   var movimentoHelper = function (prop, avancar) {
-    avancar = true
-    // se deve incrementar na coordenada (direita e baixo)
-    if(avancar) {
-      incrementa(prop)
-    }
+    // se deve incrementar na coordenada (cima e esquerda)
+    if(avancar)
+      incrementar(prop)
     // se deve decrementar na coordenada (cima e esquerda)
-    else if (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0) {
-      instancia.localizacao[prop] -= 1
-    }
-    // Se não deve ir para nenhuma randomiza novamente
     else
-      andar()
+      decrementar(prop)
   }
   
-  var incrementa = function(prop) {
+  var incrementar = function(prop) {
     if (instancia.localizacao[prop] < instancia.maximo && instancia.localizacao[prop] != instancia.maximo) {
+      // avança coordenada
       instancia.localizacao[prop] += 1
-      if(ocupado()) {
+      // Verifica se a nova coordenada está ocupada por algum elemento
+      if (ocupado()) {
+        // Valida com o ambiente que elemento está na nova coordenada
         obj = verificaObjeto(instancia.localizacao)
-        // se for agente ou lixeira
-        if((obj == null || typeof(obj) == "Lixeira") || !recolher(obj)) {
+        // se for nulo (agente), lixeira ou o não conseguir recolher o lixo
+        // (no caso de estar cheio o saco apropriado) então ele 
+        // continua na mesma coordenada
+        if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
           instancia.localizacao[prop] -= 1
         }
       }
     }
   }
-
+  
+  var decrementar = function(prop) {
+    if (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0) {
+      // retrocede coordenada
+      instancia.localizacao[prop] -= 1
+      // Verifica se a nova coordenada está ocupada por algum elemento
+      if (ocupado()) {
+        // Valida com o ambiente que elemento está na nova coordenada
+        obj = verificaObjeto(instancia.localizacao)
+        // se for nulo (agente), lixeira ou o não conseguir recolher o lixo
+        // (no caso de estar cheio o saco apropriado) então ele 
+        // continua na mesma coordenada
+        if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
+          instancia.localizacao[prop] += 1
+        }
+      }
+    }
+  }
+  
   var ocupado = function() {
     return $('#'+instancia.localizacao.coordenada()).children().length > 0
   }
-
+  
   var recolher = function(lixo) {
-    console.log("recolhendo")
     if(instancia.saco[obj.tipo].adicionar()) {
+      recolherLixo(lixo)
       limpar()
       return true
     }
@@ -79,7 +98,7 @@ function Agente(params) {
     limpar()
     $('#'+andar()).append(show())
   }
-
+  
   var limpar = function() {
     $('#'+instancia.localizacao.coordenada()).empty()
   }

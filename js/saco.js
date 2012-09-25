@@ -6,8 +6,6 @@ function Saco(params) {
   this.adicionar = function() {
     if(!this.estaCheio()) {
       quantidade_ocupada++
-      console.log(tipo + " coletado")
-      console.log(quantidade_ocupada)
       return true
     }
     return false

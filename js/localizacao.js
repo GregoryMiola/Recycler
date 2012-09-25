@@ -30,10 +30,8 @@ function Localizacoes(tamanho) {
   
   var criar = function() {
     novaLocalizacao = new Localizacao({ x: random(tamanho), y: random(tamanho) })
-      
     if(existe(novaLocalizacao))
       novaLocalizacao = criar()
-      
     return novaLocalizacao
   }
   
