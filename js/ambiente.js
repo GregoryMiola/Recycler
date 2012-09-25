@@ -100,7 +100,7 @@ function Ambiente(tamanho) {
   this.mover = function() {
     atraso = 0
     $.each(agentes, function() {
-      atraso += 700
+      atraso += 600
       agente = this
       setTimeout(function() { moverAtrasado(agente) }, atraso)
     })
@@ -117,7 +117,7 @@ function Ambiente(tamanho) {
     if(andando)
       div = $("#agente-" + agente.id).addClass("andando")
     else      
-      setTimeout(function() { encerrarMovimento(agente) }, 300)
+      setTimeout(function() { encerrarMovimento(agente) }, 400)
   }
   
   var encerrarMovimento = function(agente) {
