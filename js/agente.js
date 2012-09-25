@@ -23,24 +23,23 @@ function Agente(params) {
   
   var andar = function() {
     // Se não achou algo na tentativa anterior, segue para a proxima direcao
-    if(!encontrou) {
+    console.log(encontrou)
+    if(!encontrou)
       selecionaDirecao()
-    } else { // Segue para a mesma direção
-      console.log(proximaDirecao)
-      switch (proximaDirecao) {
-        case "cima":
-          movimentoHelper("x", false)
-          break
-        case "baixo":
-          movimentoHelper("x", true)
-          break
-        case "esquerda":
-          movimentoHelper("y", false)
-          break;
-        case "direita":
-          movimentoHelper("y", true)
-          break;
-      }
+
+    switch (proximaDirecao) {
+      case "cima":
+        movimentoHelper("x", false)
+        break
+      case "baixo":
+        movimentoHelper("x", true)
+        break
+      case "esquerda":
+        movimentoHelper("y", false)
+        break;
+      case "direita":
+        movimentoHelper("y", true)
+        break;
     }
     console.log("movimento encerrado!")
     tentativas = 0
@@ -63,14 +62,11 @@ function Agente(params) {
     else
       indiceDirecao++
       
-    console.log(tentativas)
-    console.log(direcao[indiceDirecao])
-      
     proximaDirecao = direcao[indiceDirecao]
   }
   
   var movimentoHelper = function (prop, avancar) {
-    // se deve incrementar na coordenada (cima e esquerda)
+    // se deve incrementar na coordenada (baixo e direita)
     if(avancar)
       incrementar(prop)
     // se deve decrementar na coordenada (cima e esquerda)
@@ -173,8 +169,10 @@ function Agente(params) {
       recolherLixo(lixo)
       limpar()
       encontrou = false
+      console.log("recolhendo")
       return true
     }
+    console.log("saco cheio!")
     return false
   }
   
