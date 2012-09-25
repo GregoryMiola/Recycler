@@ -26,8 +26,24 @@ function Lixeira(params) {
     instancia.localizacao = params['localizacao']
     instancia.tipo = params['tipo']
     instancia.show = lixeiras.imagem(instancia.tipo)
+    instancia.quantidade = 0
     instancia.capacidade = params['capacidade']
     $('#'+instancia.localizacao.coordenada()).append(instancia.show)
   }
+  
+  instancia.recebe = function(saco) {
+    if(saco.quantidade_ocupada > (instancia.capacidade - instancia.quantidade)) {
+      saco.quantidade_ocupada -= (instancia.capacidade - instancia.quantidade)
+      instancia.quantidade = instancia.capacidade
+    } else {
+      instancia.quantidade += saco.quantidade_ocupada
+      saco.quantidade_ocupada = 0
+    }
+  }
+  
+  instancia.estaLotada = function() {
+    return instancia.capacidade == instancia.quantidade_ocupada
+  }
+  
   init()
 }

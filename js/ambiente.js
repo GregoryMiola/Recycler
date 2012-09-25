@@ -19,7 +19,7 @@ function Ambiente(tamanho) {
     
     criarListaDeObjetos(totalDeLixos, lixos, criarLixo)
     criarListaDeObjetos(totalDeLixeiras, lixeiras, criarLixeira)
-    criarListaDeObjetos(totalDeAgentes, agentes, criarAgente)
+    criarAgentes(totalDeAgentes)
     
     //$("#legenda").append("<h2>Total:" + totalDeObjetos + '</h2>')
     //$("#legenda").append("<h2>Total de lixos:" + totalDeLixos + '</h2>')
@@ -30,6 +30,11 @@ function Ambiente(tamanho) {
   var criarListaDeObjetos = function(total, colecao, metodo) {    
     for(var indice = 0; indice < total; indice++)
       adicionarObjeto(metodo(), colecao)
+  }
+  
+  var criarAgentes = function(total) {
+    for(var indice = 0; indice < total; indice++)
+      adicionarObjeto(criarAgente(indice), agentes)
   }
   
   function adicionarObjeto(objeto, colecao) {
@@ -46,19 +51,30 @@ function Ambiente(tamanho) {
   function criarLixeira() {
     return new Lixeira({ 
       localizacao: localizacoes.nova(),
-      capacidade: random(10),
+      capacidade: random(5) + 3,
       tipo: (random(2)) ? 'seco' : 'organico'
     })
   }
   
-  function criarAgente() {
-    return new Agente({
+  function criarAgente(id) {
+    agente = new Agente({
+      id: id,
       localizacao: localizacoes.nova(),
-      capacidade: random(10),
+      capacidade: random(5) + 3,
       lixeiras: lixeiras,
       procurar: procuraObjeto,
       remover: removerLixo
     })
+    $("#agentes").append($("<div id=\"agente-"+agente.id+"\"></div>"))
+    informacoesAgente(agente)
+    return agente
+  }
+  
+  var informacoesAgente = function(agente) {
+    div = $("#agente-"+agente.id)
+    div.append($("<div>Agente: " + agente.id + "</div>"))
+    div.append($("<div>Saco de lixo seco: " + agente.saco['seco'].quantidade_ocupada + "/" + agente.saco['seco'].capacidade + "</div>"))
+    div.append($("<div>Saco de lixo seco: " + agente.saco['organico'].quantidade_ocupada + "/" + agente.saco['organico'].capacidade + "</div>"))
   }
   
   var procuraObjeto = function(coordenada) {
@@ -81,7 +97,35 @@ function Ambiente(tamanho) {
   
   var removerLixo = function(lixo) { lixos.splice(lixos.indexOf(lixo), 1) }
   
-  this.mover = function() { $.each(agentes, function() { this.anda() }) }
+  this.mover = function() {
+    atraso = 0
+    $.each(agentes, function() {
+      atraso += 700
+      agente = this
+      setTimeout(function() { moverAtrasado(agente) }, atraso)
+    })
+  }
+  
+  var moverAtrasado = function(agente) {
+    atualizaAgente(agente, true)
+    agente.anda()
+    atualizaAgente(agente, false)
+  }
+  
+  var atualizaAgente = function(agente, andando) {
+    div = $("#agente-" + agente.id)
+    if(andando)
+      div = $("#agente-" + agente.id).addClass("andando")
+    else      
+      setTimeout(function() { encerrarMovimento(agente) }, 300)
+  }
+  
+  var encerrarMovimento = function(agente) {
+    div = $("#agente-" + agente.id)
+    div.empty()
+    informacoesAgente(agente)
+    div.removeClass("andando")
+  }
   
   init()
 }

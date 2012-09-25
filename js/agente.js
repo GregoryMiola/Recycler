@@ -7,6 +7,7 @@ function Agente(params) {
   var recolherLixo = params["remover"]
   
   var init = function() { 
+    instancia.id = params["id"]
     instancia.localizacao = params['localizacao']
     instancia.maximo = tamanho - 1
     instancia.lixeiras = params["lixeiras"]
@@ -17,11 +18,77 @@ function Agente(params) {
   }
 
   var sacosCheios = function() {
-    return (instancia.saco['seco'].estaCheio() && instancia.saco['organico'].estaCheio())
+    return (instancia.saco['seco'].estaCheio() || instancia.saco['organico'].estaCheio())
   }
 
   var esvaziarSaco = function() {
-
+    maisProxima = buscarLixeiraMaisProxima()
+    if(chegouNaLixeira(maisProxima)) {
+      maisProxima.recebe(saco[maisProxima.tipo])
+      if(maisProxima.estaLotada()) 
+        lixeiras.splice(lixeiras.indexOf(maisProxima), 1)
+      if(saco[maisProxima.tipo].quantidade_ocupada == 0)
+        esvaziando = false
+    }
+  }
+  
+  var calculaDistancia = function() {
+    count = 0
+    distancias = []
+    $.each(instancia.lixeiras, function() {
+      x = Math.pow(instancia.localizacao.x - this.localizacao.x, 2)
+      y = Math.pow(instancia.localizacao.y - this.localizacao.y, 2)
+      distancias[count] = { indice: count++, distancia: Math.sqrt(x + y), tipo: this.tipo }
+    })
+    return distancias
+  }
+  
+  var buscarLixeiraMaisProxima = function() {
+    distancias = calculaDistancia()
+    if(instancia.saco['seco'].estaCheio() && instancia.saco['organico'].estaCheio())
+      distancias.sort(function(a, b) { return a["distancia"] > b["distancia"] })
+    else {
+      tipo = (instancia.saco['seco'].estaCheio()) ? 'seco' : 'organico'
+      distancias = distancias.sort(function(a,b) { return a["distancia"] > b["distancia"] && a["tipo"] == tipo })
+    }
+    return distancias
+  }
+  
+  var chegouNaLixeira = function(lixeira) {
+    return procurarNoEixo("x", lixeira, false)
+  }
+  
+  var procurarNoEixo = function(eixo, lixeira, retroceder) {
+    // se precisar buscar em outro eixo, qual será?
+    novoEixo = (eixo == "x" ? "y" : "x")
+    // se já passou para o y, então se precisar ir para o x novamente,
+    // ele terá que retroceder, ou se já estiver retrocedendo, que neste
+    // caso, ele já é o x retrocedido
+    deveraRetroceder = (novoEixo == "y" || retroceder)    
+    // Retroceder: andar no caminho contrário ao da lixiera
+    // estratégia para o caso de ficar encurralado em um lugar
+    if(!retroceder) {
+      if(Math.abs(instancia.localizacao[eixo] - lixeira.localizacao[eixo]) > 1)
+      {
+        instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+        if(ocupada()) {
+          instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+          procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
+        } else {
+          return false // não achou, mas andou uma casa
+        }
+      } else {
+        return true // está na frente da lixeira, é só esvaziar!
+      }
+    } else {
+      instancia.localizacao[eixo] += (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
+      if(ocupada()) {
+        instancia.localizacao[eixo] -= (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
+        procurarNoEixo((eixo == "x" ? "y" : "x"), lixeira, deveraRetroceder)
+      } else {
+        return false // não achou, mas andou uma casa
+      }
+    }
   }
   
   var tentativas = 0
@@ -83,7 +150,7 @@ function Agente(params) {
   
   var incrementar = function(prop) {
     if(sacosCheios()) {
-      esvaziar()
+      esvaziarSaco()
     } else {
       // verifica se não está tentando sair do mapa
       if (instancia.localizacao[prop] < instancia.maximo && instancia.localizacao[prop] != instancia.maximo) {
@@ -130,46 +197,50 @@ function Agente(params) {
   }
   
   var decrementar = function(prop) {
-    // verifica se não está tentando sair do mapa
-    if (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0) {
-      // retrocede coordenada
-      instancia.localizacao[prop] -= 1
-      // Verifica se a nova coordenada está ocupada por algum elemento
-      if (ocupado()) {
-        // Valida com o ambiente que elemento está na nova coordenada
-        obj = verificaObjeto(instancia.localizacao)
-        // se for nulo (agente), lixeira ou o não conseguir recolher o lixo
-        // (no caso de estar cheio o saco apropriado) então ele 
-        // continua na mesma coordenada
-        if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
-          instancia.localizacao[prop] += 1
-          andar()
-        }
-      } else { // Se não está ocupado irá olhar na segunda casa na mesma direção
-        if(tentativas < 5) { // isso se ele não tiver olhado para os quatro lados
-          instancia.localizacao[prop] -= 1 // foram -2 com o de cima
-          // verifica se a segunda casa está ocupada
-          if(ocupado()) {
-            // Valida com o ambiente que elemento está na nova coordenada
-            obj = verificaObjeto(instancia.localizacao)
-            if (obj == null || obj instanceof Lixeira) {
-              // se está ocupada por um dos elementos que não deve pegar
-              // então retrocede a coordenada
-              instancia.localizacao[prop] += 2
-              andar()
-            } else {
-              // achamos um lixo, então andaremos uma casa
-              instancia.localizacao[prop] += 1
-              encontrou = true
-            }
-          } else {
-            instancia.localizacao[prop] += 2
+    if(sacosCheios()) {
+      esvaziarSaco()
+    } else {
+      // verifica se não está tentando sair do mapa
+      if (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0) {
+        // retrocede coordenada
+        instancia.localizacao[prop] -= 1
+        // Verifica se a nova coordenada está ocupada por algum elemento
+        if (ocupado()) {
+          // Valida com o ambiente que elemento está na nova coordenada
+          obj = verificaObjeto(instancia.localizacao)
+          // se for nulo (agente), lixeira ou o não conseguir recolher o lixo
+          // (no caso de estar cheio o saco apropriado) então ele 
+          // continua na mesma coordenada
+          if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
+            instancia.localizacao[prop] += 1
             andar()
           }
+        } else { // Se não está ocupado irá olhar na segunda casa na mesma direção
+          if(tentativas < 5) { // isso se ele não tiver olhado para os quatro lados
+            instancia.localizacao[prop] -= 1 // foram -2 com o de cima
+            // verifica se a segunda casa está ocupada
+            if(ocupado()) {
+              // Valida com o ambiente que elemento está na nova coordenada
+              obj = verificaObjeto(instancia.localizacao)
+              if (obj == null || obj instanceof Lixeira) {
+                // se está ocupada por um dos elementos que não deve pegar
+                // então retrocede a coordenada
+                instancia.localizacao[prop] += 2
+                andar()
+              } else {
+                // achamos um lixo, então andaremos uma casa
+                instancia.localizacao[prop] += 1
+                encontrou = true
+              }
+            } else {
+              instancia.localizacao[prop] += 2
+              andar()
+            }
+          }
         }
+      } else {
+        andar()
       }
-    } else {
-      andar()
     }
   }
   
@@ -182,10 +253,8 @@ function Agente(params) {
       recolherLixo(lixo)
       limpar()
       encontrou = false
-      console.log("recolhendo")
       return true
     }
-    console.log("saco cheio!")
     return false
   }
   

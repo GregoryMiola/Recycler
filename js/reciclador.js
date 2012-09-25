@@ -14,7 +14,7 @@ function Reciclador() {
   var repeat = function() { 
     ambiente.mover()
     if(count++ < 10)
-      setTimeout(repeat, 300)
+      setTimeout(repeat, 700)
   }
   
   this.run = function() {

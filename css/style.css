@@ -5,3 +5,8 @@ td { width: 50px; height: 50px; border: 2px solid #000; }
 
 .procurando { background-color: #F63; }
 .encontrado { background-color: #F30; }
+.andando { background-color: #999; }
+
+#controles { margin-bottom: 20px;}
+#agentes { float: left; width: 200px; margin-top: 70px; padding: 20px; border: 2px solid #EEE; }
+#ambiente { float: left; margin-left: 100px; padding: 20px; }
