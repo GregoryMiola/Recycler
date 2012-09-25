@@ -74,7 +74,7 @@ function Ambiente(tamanho) {
     div = $("#agente-"+agente.id)
     div.append($("<div>Agente: " + agente.id + "</div>"))
     div.append($("<div>Saco de lixo seco: " + agente.saco['seco'].quantidade_ocupada + "/" + agente.saco['seco'].capacidade + "</div>"))
-    div.append($("<div>Saco de lixo seco: " + agente.saco['organico'].quantidade_ocupada + "/" + agente.saco['organico'].capacidade + "</div>"))
+    div.append($("<div>Saco de lixo organico: " + agente.saco['organico'].quantidade_ocupada + "/" + agente.saco['organico'].capacidade + "</div>"))
   }
   
   var procuraObjeto = function(coordenada) {

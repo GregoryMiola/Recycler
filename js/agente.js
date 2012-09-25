@@ -22,13 +22,21 @@ function Agente(params) {
   }
 
   var esvaziarSaco = function() {
+    console.log("indo na lixeira")
     maisProxima = buscarLixeiraMaisProxima()
     if(chegouNaLixeira(maisProxima)) {
-      maisProxima.recebe(saco[maisProxima.tipo])
-      if(maisProxima.estaLotada()) 
-        lixeiras.splice(lixeiras.indexOf(maisProxima), 1)
-      if(saco[maisProxima.tipo].quantidade_ocupada == 0)
+      maisProxima.recebe(instancia.saco[maisProxima.tipo])
+      if(maisProxima.estaLotada()) {
+        instancia.lixeiras.splice(instancia.lixeiras.indexOf(maisProxima), 1)
+        console.log("lixeira lotou")
+      }
+      if(instancia.saco[maisProxima.tipo].quantidade_ocupada == 0) {
         esvaziando = false
+        console.log("esvaziou")
+      } else {
+        
+        console.log("tem coisa ainda pra esvaziar")
+      }
     }
   }
   
@@ -45,13 +53,20 @@ function Agente(params) {
   
   var buscarLixeiraMaisProxima = function() {
     distancias = calculaDistancia()
-    if(instancia.saco['seco'].estaCheio() && instancia.saco['organico'].estaCheio())
-      distancias.sort(function(a, b) { return a["distancia"] > b["distancia"] })
-    else {
+    distancias.sort(function(a, b) { return a["distancia"] > b["distancia"] })
+    distancia = distancias[0]
+    // procura a menor distancia de um tipo especifico
+    if(!instancia.saco['seco'].estaCheio() || !instancia.saco['organico'].estaCheio()) {
       tipo = (instancia.saco['seco'].estaCheio()) ? 'seco' : 'organico'
-      distancias = distancias.sort(function(a,b) { return a["distancia"] > b["distancia"] && a["tipo"] == tipo })
+      total = distancias.length
+      for (indice = 0; indice < total; indice++) {
+        if(distancias[indice].tipo == tipo) {
+          distancia = distancias[indice]
+          break
+        }
+      }
     }
-    return distancias
+    return instancia.lixeiras[distancia["indice"]]
   }
   
   var chegouNaLixeira = function(lixeira) {
@@ -71,7 +86,7 @@ function Agente(params) {
       if(Math.abs(instancia.localizacao[eixo] - lixeira.localizacao[eixo]) > 1)
       {
         instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
-        if(ocupada()) {
+        if(ocupado()) {
           instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
           procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
         } else {
@@ -82,7 +97,7 @@ function Agente(params) {
       }
     } else {
       instancia.localizacao[eixo] += (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
-      if(ocupada()) {
+      if(ocupado()) {
         instancia.localizacao[eixo] -= (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
         procurarNoEixo((eixo == "x" ? "y" : "x"), lixeira, deveraRetroceder)
       } else {
@@ -149,7 +164,8 @@ function Agente(params) {
   }
   
   var incrementar = function(prop) {
-    if(sacosCheios()) {
+    if(sacosCheios() || esvaziando) {
+      esvaziando = true
       esvaziarSaco()
     } else {
       // verifica se não está tentando sair do mapa
