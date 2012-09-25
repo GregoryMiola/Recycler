@@ -1,6 +1,5 @@
 body { background-color: #333; color: #fff; padding-bottom: 50px; }
-table { border: 2px solid #000; background-color: #eee; 
-  margin-left: auto; margin-right: auto; }
+table { border: 2px solid #000; background-color: #eee; margin-left: auto; margin-right: auto; }
 td { width: 50px; height: 50px; border: 2px solid #000; }
 
 .procurando { background-color: #F63; }
@@ -8,5 +7,6 @@ td { width: 50px; height: 50px; border: 2px solid #000; }
 .andando { background-color: #999; }
 
 #controles { margin-top: 20px;}
-#agentes { float: left; width: 200px; margin-top: 22px; padding: 20px; border: 2px solid #EEE; }
+#agentes { float: left; width: 200px; margin-top: 22px; padding: 20px; border: 2px solid #EEE; font-size: 18px; }
+div[id^="agente-"] { margin-bottom: 10px;}
 #ambiente { float: left; padding: 20px; }

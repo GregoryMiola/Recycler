@@ -1,8 +1,8 @@
-var tamanho = 8
+var tamanho = random(6) + 10 //8
 
 function Reciclador() {
 
-  var ambiente, count
+  var ambiente, count, atraso
     
   var init = function() {
     h1 = $('<h1>Tamanho da matriz: '+tamanho+' x '+tamanho+'</h1>')
@@ -13,18 +13,18 @@ function Reciclador() {
   
   var repeat = function() { 
     ambiente.mover()
-    if(count++ < 10)
-      setTimeout(repeat, 600)
+    if(count++ < 10) {
+      setTimeout(repeat, atraso)
+    }
   }
   
   this.run = function() {
     count = 0
+    atraso = 800 * ambiente.totalDeAgentes()
     repeat()
   }
   
-  this.next = function() {
-    ambiente.mover()
-  }
+  this.next = function() { ambiente.mover() }
   
   init()
 }

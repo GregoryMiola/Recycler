@@ -5,17 +5,21 @@ function Ambiente(tamanho) {
   var lixos = []
   var localizacoes = new Localizacoes(tamanho)
   
+  this.totalDeAgentes = function() {
+    return agentes.length
+  }
+  
   var init = function() {
     new Matriz(tamanho)
     criarObjetos()
   }
   
   var criarObjetos = function() {    
-    totalDeObjetos = random(tamanho) + tamanho * 2
+    totalDeObjetos = tamanho * 4
     
-    totalDeLixos = totalDeObjetos - Math.floor(totalDeObjetos / 3)
+    totalDeLixos = totalDeObjetos - Math.floor(totalDeObjetos / 4)
     totalDeLixeiras = Math.floor(((totalDeObjetos - totalDeLixos) / 3) * 2)
-    totalDeAgentes = 1 //totalDeObjetos - (totalDeLixos + totalDeLixeiras)        
+    totalDeAgentes = totalDeObjetos - (totalDeLixos + totalDeLixeiras)
     
     criarListaDeObjetos(totalDeLixos, lixos, criarLixo)
     criarListaDeObjetos(totalDeLixeiras, lixeiras, criarLixeira)
@@ -99,11 +103,13 @@ function Ambiente(tamanho) {
   
   this.mover = function() {
     atraso = 0
-    $.each(agentes, function() {
-      atraso += 600
-      agente = this
-      setTimeout(function() { moverAtrasado(agente) }, atraso)
-    })
+    total = agentes.length
+    for(indice = 0; indice < total; indice++) {
+      atraso += 800
+      var agente = agentes[indice]
+      console.log(atraso)
+      setTimeout(moverAtrasado, atraso, agente)
+    }
   }
   
   var moverAtrasado = function(agente) {
@@ -113,11 +119,11 @@ function Ambiente(tamanho) {
   }
   
   var atualizaAgente = function(agente, andando) {
-    div = $("#agente-" + agente.id)
+    //console.log(agente)
     if(andando)
-      div = $("#agente-" + agente.id).addClass("andando")
-    else      
-      setTimeout(function() { encerrarMovimento(agente) }, 400)
+      $("#agente-" + agente.id).addClass("andando")
+    else
+      setTimeout(encerrarMovimento, 500, agente)
   }
   
   var encerrarMovimento = function(agente) {
