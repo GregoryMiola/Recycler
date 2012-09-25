@@ -1,4 +1,4 @@
-var direcao = [ "cima", "esquerda", "baixo", "direita" ]
+var direcao = [ "cima", "direita", "baixo", "esquerda" ]
 
 function Agente(params) {
   
@@ -16,22 +16,57 @@ function Agente(params) {
     $("#"+instancia.localizacao.coordenada()).append(show()) 
   }
   
+  var tentativas = 0
+  var indiceDirecao = 0
+  var proximaDirecao
+  var encontrou = false
+  
   var andar = function() {
-    switch (direcao[random(4)]) {
-      case "cima":
-        movimentoHelper("x", false)
-        break
-      case "baixo":
-        movimentoHelper("x", true)
-        break
-      case "esquerda":
-        movimentoHelper("y", false)
-        break;
-      case "direita":
-        movimentoHelper("y", true)
-        break;
+    // Se não achou algo na tentativa anterior, segue para a proxima direcao
+    if(!encontrou) {
+      selecionaDirecao()
+    } else { // Segue para a mesma direção
+      console.log(proximaDirecao)
+      switch (proximaDirecao) {
+        case "cima":
+          movimentoHelper("x", false)
+          break
+        case "baixo":
+          movimentoHelper("x", true)
+          break
+        case "esquerda":
+          movimentoHelper("y", false)
+          break;
+        case "direita":
+          movimentoHelper("y", true)
+          break;
+      }
     }
+    console.log("movimento encerrado!")
+    tentativas = 0
     return instancia.localizacao.coordenada()
+  }
+  
+  var selecionaDirecao = function() {
+    tentativas++
+    if(tentativas == 1) {
+      indiceDirecao = random(4)
+      proximaDirecao = direcao[indiceDirecao]
+    } else {
+      mudaDirecao()
+    }
+  }
+  
+  var mudaDirecao = function() {
+    if (indiceDirecao == 3)
+      indiceDirecao = 0
+    else
+      indiceDirecao++
+      
+    console.log(tentativas)
+    console.log(direcao[indiceDirecao])
+      
+    proximaDirecao = direcao[indiceDirecao]
   }
   
   var movimentoHelper = function (prop, avancar) {
@@ -44,6 +79,7 @@ function Agente(params) {
   }
   
   var incrementar = function(prop) {
+    // verifica se não está tentando sair do mapa
     if (instancia.localizacao[prop] < instancia.maximo && instancia.localizacao[prop] != instancia.maximo) {
       // avança coordenada
       instancia.localizacao[prop] += 1
@@ -57,11 +93,36 @@ function Agente(params) {
         if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
           instancia.localizacao[prop] -= 1
         }
+      } else { // Se não está ocupado irá olhar na segunda casa na mesma direção
+        if (tentativas < 5) { // isso se ele não tiver olhado para os quatro lados
+          instancia.localizacao[prop] += 1 // foram +2 com o de cima
+          // verifica se a segunda casa está ocupada
+          if(ocupado()) {
+            // Valida com o ambiente que elemento está na nova coordenada
+            obj = verificaObjeto(instancia.localizacao)
+            if (obj == null || obj instanceof Lixeira) {
+              // se está ocupada por um dos elementos que não deve pegar
+              // então retrocede a coordenada
+              instancia.localizacao[prop] -= 2
+              andar()
+            } else {
+              // achamos um lixo, então andaremos uma casa
+              instancia.localizacao[prop] -= 1
+              encontrou = true
+            }
+          } else {
+            instancia.localizacao[prop] -= 2
+            andar()
+          }
+        }
       }
+    } else {
+      andar()
     }
   }
   
   var decrementar = function(prop) {
+    // verifica se não está tentando sair do mapa
     if (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0) {
       // retrocede coordenada
       instancia.localizacao[prop] -= 1
@@ -75,7 +136,31 @@ function Agente(params) {
         if (obj == null || obj instanceof Lixeira || !recolher(obj)) {
           instancia.localizacao[prop] += 1
         }
+      } else { // Se não está ocupado irá olhar na segunda casa na mesma direção
+        if(tentativas < 5) { // isso se ele não tiver olhado para os quatro lados
+          instancia.localizacao[prop] -= 1 // foram -2 com o de cima
+          // verifica se a segunda casa está ocupada
+          if(ocupado()) {
+            // Valida com o ambiente que elemento está na nova coordenada
+            obj = verificaObjeto(instancia.localizacao)
+            if (obj == null || obj instanceof Lixeira) {
+              // se está ocupada por um dos elementos que não deve pegar
+              // então retrocede a coordenada
+              instancia.localizacao[prop] += 2
+              andar()
+            } else {
+              // achamos um lixo, então andaremos uma casa
+              instancia.localizacao[prop] += 1
+              encontrou = true
+            }
+          } else {
+            instancia.localizacao[prop] += 2
+            andar()
+          }
+        }
       }
+    } else {
+      andar()
     }
   }
   
@@ -87,6 +172,7 @@ function Agente(params) {
     if(instancia.saco[obj.tipo].adicionar()) {
       recolherLixo(lixo)
       limpar()
+      encontrou = false
       return true
     }
     return false
