@@ -1,4 +1,4 @@
-var tamanho = random(6) + 10 //8
+var tamanho = random(6) + 6 //8
 
 function Reciclador() {
 

@@ -15,11 +15,11 @@ function Ambiente(tamanho) {
   }
   
   var criarObjetos = function() {    
-    totalDeObjetos = tamanho * 4
+    totalDeObjetos = tamanho * 6
     
     totalDeLixos = totalDeObjetos - Math.floor(totalDeObjetos / 4)
     totalDeLixeiras = Math.floor(((totalDeObjetos - totalDeLixos) / 3) * 2)
-    totalDeAgentes = totalDeObjetos - (totalDeLixos + totalDeLixeiras)
+    totalDeAgentes = 2 //totalDeObjetos - (totalDeLixos + totalDeLixeiras)
     
     criarListaDeObjetos(totalDeLixos, lixos, criarLixo)
     criarListaDeObjetos(totalDeLixeiras, lixeiras, criarLixeira)
@@ -107,7 +107,6 @@ function Ambiente(tamanho) {
     for(indice = 0; indice < total; indice++) {
       atraso += 800
       var agente = agentes[indice]
-      console.log(atraso)
       setTimeout(moverAtrasado, atraso, agente)
     }
   }

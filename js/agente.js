@@ -24,35 +24,41 @@ function Agente(params) {
   
   var esvaziarSaco = function() {
     maisProxima = buscarLixeiraMaisProxima()
-
+    
     if(chegouNaLixeira(maisProxima)) {
       maisProxima.recebe(instancia.saco[maisProxima.tipo])
-
-      if(maisProxima.estaLotada())
-        instancia.lixeiras.splice(instancia.lixeiras.indexOf(maisProxima), 1)
       
-      if(instancia.saco[maisProxima.tipo].quantidade_ocupada == 0) {
+      if(maisProxima.estaLotada())
+        instancia.lixeiras.splice(instancia.lixeiras.indexOf(maisProxima), 1)      
+      
+      if(instancia.saco[maisProxima.tipo].quantidade_ocupada == 0)
         esvaziando = false
-        console.log("esvaziou")
-      } else {
-        console.log("tem coisa ainda pra esvaziar")
-      }
     }
   }
   
-  var calculaDistancia = function() {
+  var calcularDistanciasDasLixeiras = function() {
     count = 0
     distancias = []
     $.each(instancia.lixeiras, function() {
-      x = Math.pow(instancia.localizacao.x - this.localizacao.x, 2)
-      y = Math.pow(instancia.localizacao.y - this.localizacao.y, 2)
-      distancias[count] = { indice: count++, distancia: Math.sqrt(x + y), tipo: this.tipo }
+      distancias[count] = { 
+        indice: count++, 
+        distancia: calculaDistancia(this), 
+        tipo: this.tipo 
+      }
     })
     return distancias
   }
+
+  var calculaDistancia = function(objeto) {
+    x = Math.pow(instancia.localizacao.x - objeto.localizacao.x, 2)
+    y = Math.pow(instancia.localizacao.y - objeto.localizacao.y, 2)
+    d = Math.sqrt(x + y)
+    console.log(d)
+    return d
+  }
   
   var buscarLixeiraMaisProxima = function() {
-    distancias = calculaDistancia()
+    distancias = calcularDistanciasDasLixeiras()
     distancias.sort(function(a, b) { return a["distancia"] > b["distancia"] })
     distancia = distancias[0]
     // procura a menor distancia de um tipo especifico
@@ -74,8 +80,6 @@ function Agente(params) {
   }
   
   var procurarNoEixo = function(eixo, lixeira, retroceder) {
-    console.log("procurando lixeira")
-    console.log(lixeira.tipo)
     // se precisar buscar em outro eixo, qual será?
     novoEixo = (eixo == "x" ? "y" : "x")
     // se já passou para o y, então se precisar ir para o x novamente,
@@ -85,7 +89,7 @@ function Agente(params) {
     // Retroceder: andar no caminho contrário ao da lixiera
     // estratégia para o caso de ficar encurralado em um lugar
     if(!retroceder) {
-      if(Math.abs(instancia.localizacao[eixo] - lixeira.localizacao[eixo]) > 1)
+      if(calculaDistancia(lixeira) > 1)
       {
         instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
         if(ocupado()) {
