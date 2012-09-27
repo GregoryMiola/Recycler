@@ -52,9 +52,7 @@ function Agente(params) {
   var calculaDistancia = function(objeto) {
     x = Math.pow(instancia.localizacao.x - objeto.localizacao.x, 2)
     y = Math.pow(instancia.localizacao.y - objeto.localizacao.y, 2)
-    d = Math.sqrt(x + y)
-    console.log(d)
-    return d
+    return Math.sqrt(x + y)
   }
   
   var buscarLixeiraMaisProxima = function() {
@@ -85,38 +83,64 @@ function Agente(params) {
     // se já passou para o y, então se precisar ir para o x novamente,
     // ele terá que retroceder, ou se já estiver retrocedendo, que neste
     // caso, ele já é o x retrocedido
-    deveraRetroceder = (novoEixo == "y" || retroceder)    
+    deveraRetroceder = (novoEixo == "y" || !retroceder)    
     // Retroceder: andar no caminho contrário ao da lixiera
     // estratégia para o caso de ficar encurralado em um lugar
     if(!retroceder) {
       if(calculaDistancia(lixeira) > 1)
       {
-        instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
-        if(ocupado()) {
-          instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
-          procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
+        if(instancia.localizacao[eixo] == lixeira.localizacao[eixo]) {
+          procurarNoEixo(novoEixo, lixeira, retroceder)
         } else {
-          return false // não achou, mas andou uma casa
+          instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+          if(ocupado() || !estaNoMapa()) {
+            instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+            procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
+          } else {
+            instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+            if(ocupado() && calculaDistancia > 1) {
+              instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -2 : 2
+              procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
+            } else {
+              return false // não achou, mas andou uma casa
+            }
+          }
         }
       } else {
         return true // está na frente da lixeira, é só esvaziar!
       }
     } else {
-      instancia.localizacao[eixo] += (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
-      if(ocupado()) {
-        instancia.localizacao[eixo] -= (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
-        procurarNoEixo((eixo == "x" ? "y" : "x"), lixeira, deveraRetroceder)
+      if(instancia.localizacao[eixo] == lixeira.localizacao[eixo]) {
+        procurarNoEixo(novoEixo, lixeira, retroceder)
       } else {
-        return false // não achou, mas andou uma casa
+        instancia.localizacao[eixo] += (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
+        if(ocupado() || !estaNoMapa()) {
+          instancia.localizacao[eixo] -= (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
+          procurarNoEixo((eixo == "x" ? "y" : "x"), lixeira, deveraRetroceder)
+        } else {
+          return false // não achou, mas andou uma casa
+        }
       }
     }
   }
+
+  var estaNoMapa = function() {
+    return (eixoDentroDoMapa("x") && eixoDentroDoMapa("y"))
+  }
+
+  var eixoDentroDoMapa = function(prop) {
+    inferior = (instancia.localizacao[prop] > 0 && instancia.localizacao[prop] != 0)
+    superior = (instancia.localizacao[prop] < instancia.maximo && instancia.localizacao[prop] != instancia.maximo)
+    return (inferior && superior)
+  }
   
   var tentativas = 0
+  var buscas = 0
   var indiceDirecao = 0
   var proximaDirecao
   var encontrou = false
   var esvaziando = false
+  var coletou = false
   
   var andar = function() {
 
@@ -124,7 +148,7 @@ function Agente(params) {
       esvaziarSaco()
     } else {
       // Se não achou algo na tentativa anterior, segue para a proxima direcao
-      if(!encontrou)
+      if(!encontrou || buscas < 3)
         selecionaDirecao()
         
       switch (proximaDirecao) {
@@ -271,6 +295,8 @@ function Agente(params) {
       recolherLixo(lixo)
       limpar()
       encontrou = false
+      coletou = true
+      console.log("coletou")
       return true
     }
     return false
@@ -281,6 +307,16 @@ function Agente(params) {
   instancia.anda = function() {
     limpar()
     $('#'+andar()).append(show())
+    
+    if(!coletou || !encontrou) {
+      buscas++
+    }
+    else if (coletou) {
+      coletou = false
+      buscas = 0
+    }
+    console.log(buscas)
+    console.log(proximaDirecao)
   }
   
   var limpar = function() {
