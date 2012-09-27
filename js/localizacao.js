@@ -1,10 +1,16 @@
 function Localizacao(localizacao) {
-  this.x = localizacao['x']
-  this.y = localizacao['y']
-  this.coordenada = function() { return this.x + '-' + this.y }
-  this.possuiMesmaCoordenadaQue = function(objeto) {
-    return (objeto.x == this.x && objeto.y == this.y)
+  var instancia = this
+  
+  var init = function() { 
+	instancia.x = localizacao['x']
+	instancia.y = localizacao['y']
+	instancia.coordenada = function() { return instancia.x + '-' + instancia.y }
+	instancia.possuiMesmaCoordenadaQue = function(objeto) {
+	return (objeto.x == instancia.x && objeto.y == instancia.y)
+	}
   }
+  
+  init()
 }
 
 function Localizacoes(tamanho) {

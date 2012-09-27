@@ -93,7 +93,7 @@ function Agente(params) {
           procurarNoEixo(novoEixo, lixeira, retroceder)
         } else {
           instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
-          if(ocupado() || !estaNoMapa()) {
+          if(!ocupado() || !estaNoMapa()) {
             instancia.localizacao[eixo] -= (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
             procurarNoEixo(novoEixo, lixeira, deveraRetroceder)
           } else {
@@ -113,8 +113,8 @@ function Agente(params) {
       if(instancia.localizacao[eixo] == lixeira.localizacao[eixo]) {
         procurarNoEixo(novoEixo, lixeira, retroceder)
       } else {
-        instancia.localizacao[eixo] += (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
-        if(ocupado() || !estaNoMapa()) {
+        instancia.localizacao[eixo] += (instancia.localizacao[eixo] > lixeira.localizacao[eixo]) ? -1 : 1
+        if(!ocupado() || !estaNoMapa()) {
           instancia.localizacao[eixo] -= (instancia.localizacao[eixo] < lixeira.localizacao[eixo]) ? -1 : 1
           procurarNoEixo((eixo == "x" ? "y" : "x"), lixeira, deveraRetroceder)
         } else {

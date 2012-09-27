@@ -23,6 +23,8 @@ function Lixo(params) {
 function Lixeira(params) {  
   var instancia = this
   var init = function() {
+	instancia.id = params["id"]
+	instancia.id = params["id"]
     instancia.localizacao = params['localizacao']
     instancia.tipo = params['tipo']
     instancia.show = lixeiras.imagem(instancia.tipo)

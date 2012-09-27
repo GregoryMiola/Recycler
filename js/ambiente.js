@@ -17,8 +17,8 @@ function Ambiente(tamanho) {
   var criarObjetos = function() {    
     totalDeObjetos = tamanho * 6
     
-    totalDeLixos = totalDeObjetos - Math.floor(totalDeObjetos / 4)
-    totalDeLixeiras = Math.floor(((totalDeObjetos - totalDeLixos) / 3) * 2)
+    totalDeLixos = totalDeObjetos - Math.floor(totalDeObjetos / 2.5)
+    totalDeLixeiras = Math.floor((totalDeObjetos - totalDeLixos) / 5)
     totalDeAgentes = 2 //totalDeObjetos - (totalDeLixos + totalDeLixeiras)
     
     criarListaDeObjetos(totalDeLixos, lixos, criarLixo)
@@ -32,8 +32,12 @@ function Ambiente(tamanho) {
   }
   
   var criarListaDeObjetos = function(total, colecao, metodo) {    
-    for(var indice = 0; indice < total; indice++)
-      adicionarObjeto(metodo(), colecao)
+    for(var indice = 0; indice < total; indice++){
+		if(metodo == criarLixeira)
+			adicionarObjeto(metodo(indice), colecao)
+		else
+			adicionarObjeto(metodo(), colecao)
+	  }
   }
   
   var criarAgentes = function(total) {
@@ -52,19 +56,23 @@ function Ambiente(tamanho) {
     })
   }
   
-  function criarLixeira() {
-    return new Lixeira({ 
+  function criarLixeira(id) {
+    lixeira = new Lixeira({ 
+	  id: id,
       localizacao: localizacoes.nova(),
-      capacidade: random(5) + 3,
+      capacidade: random(4) + 3,
       tipo: (random(2)) ? 'seco' : 'organico'
     })
+	$("#lixeiras").append($("<div id=\"lixeira-"+lixeira.id+"\"></div>"))
+	informacoesLixeira(lixeira)
+	return lixeira
   }
   
   function criarAgente(id) {
     agente = new Agente({
       id: id,
       localizacao: localizacoes.nova(),
-      capacidade: random(5) + 3,
+      capacidade: random(2) + 3,
       lixeiras: lixeiras,
       procurar: procuraObjeto,
       remover: removerLixo
@@ -79,6 +87,13 @@ function Ambiente(tamanho) {
     div.append($("<div>Agente: " + agente.id + "</div>"))
     div.append($("<div>Saco de lixo seco: " + agente.saco['seco'].quantidade_ocupada + "/" + agente.saco['seco'].capacidade + "</div>"))
     div.append($("<div>Saco de lixo organico: " + agente.saco['organico'].quantidade_ocupada + "/" + agente.saco['organico'].capacidade + "</div>"))
+  }
+  
+  var informacoesLixeira = function(lixeira) {
+    div = $("#lixeira-"+lixeira.id)
+    div.append($("<div>Lixeira: " + lixeira.id + "</div>"))
+    div.append($("<div>Tipo da lixeira: " + lixeira.tipo + "</div>"))
+    div.append($("<div>Quantidade de lixo: " + lixeira.quantidade + "/" + lixeira.capacidade + "</div>"))
   }
   
   var procuraObjeto = function(coordenada) {
@@ -126,10 +141,15 @@ function Ambiente(tamanho) {
   }
   
   var encerrarMovimento = function(agente) {
-    div = $("#agente-" + agente.id)
-    div.empty()
+    divAgent = $("#agente-" + agente.id)
+    divAgent.empty()
     informacoesAgente(agente)
-    div.removeClass("andando")
+	$(lixeiras).each(function(){
+	  divDump = $("#lixeira-" + this.id)
+      divDump.empty()
+	  informacoesLixeira(this)
+	})
+    divAgent.removeClass("andando")
   }
   
   init()

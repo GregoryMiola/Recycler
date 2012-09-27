@@ -18,8 +18,19 @@
       <input id="runButton" type="button" value="Rodar">
       <input id="nextButton" type="button" value="Avancar">
     </div>
-    <div id="agentes"></div>
-    <div id="ambiente"></div>    
+	<table class="info-ambiente">
+		<tr>
+		<td>
+			<div id="agentes"></div>
+			</td>
+		</tr>
+		<tr>
+		<td>
+			<div id="lixeiras"></div>
+			</td>
+		</tr>
+    <table>
+	<div id="ambiente"></div>    
     <script type="text/javascript">
       $(function() { 
         reciclador = new Reciclador();

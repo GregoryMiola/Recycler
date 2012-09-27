@@ -1,7 +1,7 @@
 function Matriz(tamanho) { 
   
   var criarMatriz = function() {
-    var tabela = $('<table></table>')
+    var tabela = $('<table class="ambiente-obj"></table>')
     $('#ambiente').append(tabela)
     
     for(var indice = 0; indice < tamanho; indice++) {      
@@ -17,7 +17,7 @@ function Matriz(tamanho) {
   
   var criarColunasParaLinha = function(linha) {
     for(var indice = 0; indice < tamanho; indice++) {
-      $(linha).append(criaColunaComID(linha.attr('id') + '-' + indice))
+      $(linha).append(criaColunaComID(indice + '-' + linha.attr('id')))
     }
   }
   
